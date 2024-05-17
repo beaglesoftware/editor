@@ -1,7 +1,6 @@
 import argparse
 import curses
 import sys
-import keyboard
 
 class Window:
     def __init__(self, n_rows, n_cols, row=0, col=0):
