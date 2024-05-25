@@ -8,8 +8,7 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 import sys
 from syntax import *
-import os
-import re
+from autocomplete import *
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -55,39 +54,62 @@ class Ui_MainWindow(object):
         self.css_highlighter = CSSHighlighter(self.plainTextEdit.document())
         self.csharp_highlighter = CSharpHighlighter(self.plainTextEdit.document())
         self.c_highlighter = CHighlighter(self.plainTextEdit.document())
-        
 
+        # Add Autocompletion
+        self.completer = QtWidgets.QCompleter()
+        self.completer.setWidget(self.plainTextEdit)
+        self.model = QtGui.QStandardItemModel(self.completer)
+        self.completer.setModel(self.model)
+        self.completer.setCompletionMode(QtWidgets.QCompleter.CompletionMode.PopupCompletion)
+        self.plainTextEdit.textChanged.connect(self.update_completions)
+
+        self.filename = None
 
     def save_file(self):
-        filename, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save File", "", "All Files (*)")
-        if filename:
-            with open(filename, 'w') as f:
+        self.filename, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save File", "", "All Files (*)")
+        if self.filename:
+            with open(self.filename, 'w') as f:
                 f.write(self.plainTextEdit.toPlainText())
 
     def open_file(self):
-        filename, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Open File", "", "All Files (*)")
-        if filename:
-            with open(filename, 'r') as f:
+        self.filename, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Open File", "", "All Files (*)")
+        if self.filename:
+            with open(self.filename, 'r') as f:
                 filelines = f.readlines()
                 self.plainTextEdit.clear()
                 for fileline in filelines:
                     self.plainTextEdit.insertPlainText(fileline)
-        
-        if filename.endswith('.py'):
-            self.highlighter = PythonHighlighter(self.plainTextEdit.document())
-        elif filename.endswith('.html'):
-            self.highlighter = HTMLHighlighter(self.plainTextEdit.document())
-        elif filename.endswith('.cpp') or filename.endswith('.h'):
-            self.cpp_highlighter = CppHighlighter(self.plainTextEdit.document())
-        elif filename.endswith('.css'):
-            self.css_highlighter = CSSHighlighter(self.plainTextEdit.document())
-        elif filename.endswith('.cs'):
-            self.csharp_highlighter = CSharpHighlighter(self.plainTextEdit.document())
-        elif filename.endswith('.c'):
-            self.c_highlighter = CHighlighter(self.plainTextEdit.document())
-        elif filename.endswith('.js'):
-            self.js_highlighter = JavaScriptHighlighter(self.plainTextEdit.document())
+            self.update_completions()
 
+    def update_completions(self):
+        if self.filename is None:
+            return
+
+        if self.filename.endswith('.py'):
+            suggestions = PythonSuggestions.get_suggestions
+        elif self.filename.endswith('.html'):
+            suggestions = HTMLSuggestions.get_suggestions
+        elif self.filename.endswith('.cpp') or self.filename.endswith('.h'):
+            suggestions = CppSuggestions.get_suggestions
+        elif self.filename.endswith('.css'):
+            suggestions = CSSSuggestions.get_suggestions
+        elif self.filename.endswith('.cs'):
+            suggestions = CSharpSuggestions.get_suggestions
+        elif self.filename.endswith('.c'):
+            suggestions = CSuggestions.get_suggestions
+        elif self.filename.endswith('.js'):
+            suggestions = JavaScriptSuggestions.get_suggestions
+        else:
+            suggestions = lambda word_fragment: []
+
+        cursor = self.plainTextEdit.textCursor()
+        cursor.select(QtGui.QTextCursor.SelectionType.WordUnderCursor)
+        word_fragment = cursor.selectedText()
+        suggestions_list = suggestions(word_fragment)
+        self.model.clear()
+        for suggestion in suggestions_list:
+            item = QtGui.QStandardItem(suggestion)
+            self.model.appendRow(item)
 
     def change_font(self):
         font = self.fontComboBox.currentFont()

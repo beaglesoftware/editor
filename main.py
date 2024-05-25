@@ -1,7 +1,14 @@
+import importlib
 import argparse
+import inspect
 import curses
+import sys
+import ast
 import os
 import re
+from unittest import enterModuleContext
+
+from pyparsing import java_style_comment
 
 class Window:
     def __init__(self, n_rows, n_cols, row=0, col=0):
@@ -51,6 +58,10 @@ class Cursor:
             # Add four spaces when moving to the next line
             self.col = min(self.col + 4, len(buffer[self.row]))  # Ensure the column doesn't exceed the line length
 
+    def move_to(self, row, col):
+        self.row = row
+        self.col = col
+
     def move_left(self, buffer):
         if self.col > 0:
             self.col -= 1
@@ -61,7 +72,7 @@ class Cursor:
     def move_right(self, buffer):
         if self.col < len(buffer[self.row]):
             self.col += 1
-        elif self.row < len(buffer) - 1:
+        elif self.row < len(buffer.lines) - 1:
             self.row += 1
             self.col = 0
 
@@ -83,7 +94,6 @@ class Cursor:
             self.col = 0
 
     def backspace(self, buffer):
-        """Deletes the character at the cursor position."""
         if self.col > 0:
             # Delete the character at the current position by slicing
             current = buffer[self.row]
@@ -105,14 +115,17 @@ class Buffer:
 
     def __getitem__(self, index):
         return self.lines[index]
-
+    
+    def __setitem__(self, idx, value):
+        self.lines[idx] = value
+    
     def insert(self, cursor, string):
         row, col = cursor.row, cursor.col
 
         # Extend self.lines if row index is out of range
         while row >= len(self.lines):
             self.lines.append('')
-
+        
         current = self.lines[row]
         self.lines[row] = current[:col] + string + current[col:]
 
@@ -121,24 +134,50 @@ class Buffer:
         current = self.lines[row]
         self.lines[row] = current[:col]
         self.lines.insert(row + 1, current[col:])
+        cursor.row += 1
+        cursor.col = 0
 
     def delete(self, cursor):
         row, col = cursor.row, cursor.col
         if col > 0:
             current = self.lines[row]
             self.lines[row] = current[:col - 1] + current[col:]
+            cursor.col -= 1
         elif row > 0:
-            self.lines[row - 1] += self.lines.pop(row)
+            cursor.row -= 1
+            cursor.col = len(self.lines[cursor.row])
+            self.lines[cursor.row] += self.lines.pop(row)
 
     def join_with_previous_line(self, cursor):
         if cursor.row > 0:
+            cursor.col = len(self.lines[cursor.row - 1])
             self.lines[cursor.row - 1] += self.lines.pop(cursor.row)
+            cursor.row -= 1
 
     def save_to_file(self, filename):
-        """Save the buffer content to a file."""
         with open(filename, 'w') as f:
             f.write('\n'.join(self.lines))
             return True  # Return True if saving is successful
+        
+    def doublequote(self, cursor):
+        row, col = cursor.row, cursor.col
+
+        # Extend self.lines if row index is out of range
+        while row >= len(self.lines):
+            self.lines.append('')
+        
+        current = self.lines[row]
+        self.lines[row] = current[:col] + '"' + current[col:]
+
+    def singlequote(self, cursor):
+        row, col = cursor.row, cursor.col
+
+        # Extend self.lines if row index is out of range
+        while row >= len(self.lines):
+            self.lines.append('')
+        
+        current = self.lines[row]
+        self.lines[row] = current[:col] + "'" + current[col:]
 
 class HighlighterBase:
     def apply_highlighting(self, stdscr, text, start_row, highlighting_rules):
@@ -248,8 +287,152 @@ class SyntaxHighlighter:
         else:
             stdscr.addstr(start_row, 0, text)
 
+class PythonSuggestions:
+    @staticmethod
+    def get_suggestions(word_fragment):
+        keywords = [
+            'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await', 'break', 'class', 'continue',
+            'def', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import',
+            'in', 'is', 'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield'
+        ]
+        return [kw for kw in keywords if kw.startswith(word_fragment)]
+
+class CSSSuggestions:
+    @staticmethod
+    def get_suggestions(word_fragment):
+        properties = [
+            'color', 'background', 'margin', 'padding', 'border', 'width', 'height', 'font-size', 'font-weight', 'text-align'
+        ]
+        return [prop for prop in properties if prop.startswith(word_fragment)]
+
+class CppSuggestions:
+    @staticmethod
+    def get_suggestions(word_fragment):
+        keywords = [
+            'auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum', 'extern',
+            'float', 'for', 'goto', 'if', 'inline', 'int', 'long', 'register', 'restrict', 'return', 'short', 'signed',
+            'sizeof', 'static', 'struct', 'switch', 'typedef', 'union', 'unsigned', 'void', 'volatile', 'while', '_Alignas',
+            '_Alignof', '_Atomic', '_Bool', '_Complex', '_Generic', '_Imaginary', '_Noreturn', '_Static_assert', '_Thread_local'
+        ]
+        return [kw for kw in keywords if kw.startswith(word_fragment)]
+
+class CSharpSuggestions:
+    @staticmethod
+    def get_suggestions(word_fragment):
+        keywords = [
+            'abstract', 'as', 'base', 'bool', 'break', 'byte', 'case', 'catch', 'char', 'checked', 'class', 'const', 'continue',
+            'decimal', 'default', 'delegate', 'do', 'double', 'else', 'enum', 'event', 'explicit', 'extern', 'false', 'finally',
+            'fixed', 'float', 'for', 'foreach', 'goto', 'if', 'implicit', 'in', 'int', 'interface', 'internal', 'is', 'lock', 'long',
+            'namespace', 'new', 'null', 'object', 'operator', 'out', 'override', 'params', 'private', 'protected', 'public',
+            'readonly', 'ref', 'return', 'sbyte', 'sealed', 'short', 'sizeof', 'stackalloc', 'static', 'string', 'struct',
+            'switch', 'this', 'throw', 'true', 'try', 'typeof', 'uint', 'ulong', 'unchecked', 'unsafe', 'ushort', 'using', 'virtual',
+            'void', 'volatile', 'while'
+        ]
+        return [kw for kw in keywords if kw.startswith(word_fragment)]
+
+class CSuggestions:
+    @staticmethod
+    def get_suggestions(word_fragment):
+        keywords = [
+            'auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum', 'extern',
+            'float', 'for', 'goto', 'if', 'inline', 'int', 'long', 'register', 'restrict', 'return', 'short', 'signed',
+            'sizeof', 'static', 'struct', 'switch', 'typedef', 'union', 'unsigned', 'void', 'volatile', 'while', '_Alignas',
+            '_Alignof', '_Atomic', '_Bool', '_Complex', '_Generic', '_Imaginary', '_Noreturn', '_Static_assert', '_Thread_local'
+        ]
+        return [kw for kw in keywords if kw.startswith(word_fragment)]
+
+class JavaScriptSuggestions:
+    @staticmethod
+    def get_suggestions(word_fragment):
+        keywords = [
+            'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'export',
+            'extends', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'let', 'new', 'return', 'super', 'switch',
+            'this', 'throw', 'try', 'typeof', 'var', 'void', 'while', 'with', 'yield'
+        ]
+        return [kw for kw in keywords if kw.startswith(word_fragment)]
+
+class HTMLSuggestions:
+    @staticmethod
+    def get_suggestions(word_fragment):
+        tags = [
+            'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi', 'bdo', 'blockquote', 'body', 'br', 'button',
+            'canvas', 'caption', 'cite', 'code', 'col', 'colgroup', 'data', 'datalist', 'dd', 'del', 'details', 'dfn', 'dialog', 'div',
+            'dl', 'dt', 'em', 'embed', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head',
+            'header', 'hgroup', 'hr', 'html', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'link', 'main', 'map',
+            'mark', 'meta', 'meter', 'nav', 'noscript', 'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'picture', 'pre',
+            'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section', 'select', 'small', 'source', 'span', 'strong', 'style',
+            'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track',
+            'u', 'ul', 'var', 'video', 'wbr'
+        ]
+        return [tag for tag in tags if tag.startswith(word_fragment)]
+
+class Autocomplete:
+    def __init__(self, suggestion_classes):
+        self.suggestion_classes = suggestion_classes
+
+    def suggest(self, word_fragment):
+        suggestions = []
+        for suggestion_class in self.suggestion_classes:
+            try:
+                module_name = suggestion_class.__module__
+                module = importlib.import_module(module_name)
+                suggestions += suggestion_class().get_suggestions(word_fragment)
+            except AttributeError as e:
+                print(f"Error in suggestion class {suggestion_class.__name__}: {e}", file=sys.stderr)
+        return suggestions
+
+    def suggest_from_module(self, partial_name, module_name):
+        try:
+            module = importlib.import_module(module_name)
+            return [name for name in dir(module) if name.startswith(partial_name)]
+        except ImportError:
+            return []
+    
+    def show_suggestions(self, stdscr, suggestions):
+        # Get screen dimensions
+        max_y, max_x = stdscr.getmaxyx()
+
+        # Define popup window size and position
+        popup_height = len(suggestions) + 2
+        popup_width = max(max(len(s) for s in suggestions) + 4, 20)  # Adjust width based on longest suggestion
+        start_y = (max_y - popup_height) // 2
+        start_x = (max_x - popup_width) // 2
+
+        # Create a temporary window for the popup
+        popup = curses.newwin(popup_height, popup_width, start_y, start_x)
+        popup.box()
+
+        # Initialize user input
+        selected_suggestion = 0
+
+        while True:
+            # Clear previous suggestions
+            popup.clear()
+            popup.box()
+
+            # Display suggestions
+            for idx, suggestion in enumerate(suggestions):
+                if idx == selected_suggestion:
+                    popup.addstr(idx + 1, 2, suggestion, curses.A_REVERSE)
+                else:
+                    popup.addstr(idx + 1, 2, suggestion)
+
+            stdscr.refresh()
+            popup.refresh()
+
+            key = stdscr.getch()
+
+            if key == curses.KEY_UP:
+                selected_suggestion = (selected_suggestion - 1) % len(suggestions)
+            elif key == curses.KEY_DOWN:
+                selected_suggestion = (selected_suggestion + 1) % len(suggestions)
+            elif key in (curses.KEY_ENTER, 10, 13):  # Enter key
+                return suggestions[selected_suggestion]
+            elif key == 27:  # ESC key
+                return None
+
+
 def show_popup_input(stdscr, message):
-    """Displays a popup window for user input within the terminal."""
     # Get screen dimensions
     max_y, max_x = stdscr.getmaxyx()
 
@@ -312,7 +495,6 @@ def show_popup_input(stdscr, message):
 
 
 def show_yes_no_popup(stdscr, message):
-    """Displays a popup with Yes/No buttons for user confirmation."""
     # Get screen dimensions
     max_y, max_x = stdscr.getmaxyx()
 
@@ -342,7 +524,6 @@ def show_yes_no_popup(stdscr, message):
 
     # Display Yes button (initially highlighted)
     popup.addstr(button_y, yes_button_x, " Yes ", curses.color_pair(1))
-
     # Display No button
     popup.addstr(button_y, no_button_x, " No ", curses.color_pair(0))
 
@@ -377,8 +558,23 @@ def show_yes_no_popup(stdscr, message):
     return selected_button == 0
 
 def show_popup_save_path(stdscr):
-    """Displays a popup window for the user to input a file path."""
     return show_popup_input(stdscr, "Where to save the file")
+
+def show_suggestions(stdscr, buffer, cursor, autocomplete):
+    current_line = buffer[cursor.row]
+    word_fragment_match = re.search(r'\b\w*$', current_line[:cursor.col])
+
+    if word_fragment_match:
+        word_fragment = word_fragment_match.group()
+        suggestions = autocomplete.suggest(word_fragment)
+
+        if suggestions:
+            selected_suggestion = autocomplete.show_suggestions(stdscr, suggestions)
+
+            if selected_suggestion:
+                insertion_text = selected_suggestion[len(word_fragment):]
+                buffer.insert_text(cursor.row, cursor.col, insertion_text)
+                cursor.move_to(cursor.row, cursor.col + len(insertion_text))
 
 
 def main(stdscr, filename):
@@ -400,6 +596,32 @@ def main(stdscr, filename):
     syntax_highlighter = SyntaxHighlighter()
 
     file_extension = os.path.splitext(filename)[1]
+    highlighter = None
+    suggestion_classes = []
+
+    if file_extension == '.py':
+        highlighter = PythonHighlighter()
+        suggestion_classes.append(PythonSuggestions)
+    elif file_extension == '.css':
+        highlighter = CSSHighlighter()
+        suggestion_classes.append(CSSSuggestions)
+    elif file_extension in ['.cpp', '.cxx', '.hpp']:
+        highlighter = CppHighlighter()
+        suggestion_classes.append(CppSuggestions)
+    elif file_extension == '.cs':
+        highlighter = CSharpHighlighter()
+        suggestion_classes.append(CSharpSuggestions)
+    elif file_extension == '.c':
+        highlighter = CHighlighter()
+        suggestion_classes.append(CSuggestions)
+    elif file_extension == '.js':
+        highlighter = JavaScriptHighlighter()
+        suggestion_classes.append(JavaScriptSuggestions)
+    elif file_extension == '.html':
+        highlighter = HTMLHighlighter()
+        suggestion_classes.append(HTMLSuggestions)
+
+    autocomplete = Autocomplete(suggestion_classes)
 
     while True:
         stdscr.clear()
@@ -426,8 +648,14 @@ def main(stdscr, filename):
         elif key == curses.KEY_RIGHT:
             cursor.move_right(buffer)
             window.adjust_horizontal_scroll(cursor)
-        elif key == curses.KEY_ENTER or key == 10 or key == 13:
-            buffer.insert(cursor, "\n")
+        elif key == curses.KEY_ENTER or key == 10:  # Enter key
+            current_line = buffer[cursor.row]
+            buffer[cursor.row] = current_line[:cursor.col]
+            buffer.insert(cursor.row+1, current_line[cursor.col:])
+            cursor.row += 1
+            cursor.col = 0
+        elif key == 32:  # Ctrl+Space
+            show_suggestions(stdscr, buffer, cursor, autocomplete)
         elif key == '\x13':  # Ctrl+S to save
             save_confirmed = show_yes_no_popup(stdscr, "Do you want to save?")
             if save_confirmed:
@@ -450,14 +678,25 @@ def main(stdscr, filename):
             buffer.delete(cursor)
         elif key == '\x1b':  # ESC key to exit
             break
-        # Handle other keys, including printable characters
+        elif key == '"':  # Double quote (") or single quote (')
+            char = int('"')
+            buffer.doublequote(cursor)
+            cursor.move_right(buffer)
+        elif key == "'":
+            char = int("'")
+            buffer.singlequote(cursor)
+            cursor.move_right(buffer)
         else:
-            if isinstance(key, str) and len(key) == 1:
-                # Check if the key is a printable character
-                if key.isprintable():
-                    buffer.insert(cursor, key)
-                    cursor.move_right(buffer)
-                    window.adjust_horizontal_scroll(cursor)
+            buffer.insert(cursor, key)
+            cursor.move_right(buffer)
+        
+        # Adjust window scrolling
+        window.adjust_horizontal_scroll(cursor)
+        if cursor.row < window.row:
+            window.scroll_up()
+        elif cursor.row > window.bottom:
+            window.scroll_down(buffer)
+        
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Text editor with syntax highlighting.')
     parser.add_argument('filename', help='File to edit')
