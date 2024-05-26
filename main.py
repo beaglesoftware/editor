@@ -131,6 +131,11 @@ class Buffer:
 
     def split(self, cursor):
         row, col = cursor.row, cursor.col
+
+        # Ensure the cursor.row value is within the valid range
+        if row >= len(self.lines):
+            raise IndexError(f"Cursor row {row} is out of range.")
+
         current = self.lines[row]
         self.lines[row] = current[:col]
         self.lines.insert(row + 1, current[col:])

@@ -12,16 +12,17 @@ class PythonHighlighter(QtGui.QSyntaxHighlighter):
         keyword_format = QtGui.QTextCharFormat()
         keyword_format.setForeground(QtGui.QColor('blue'))
         keyword_patterns = [
-            r'\bdef\b', r'\bclass\b', r'\bif\b', r'\belse\b', r'\bfor\b',
-            r'\bwhile\b', r'\breturn\b', r'\bimport\b', r'\bfrom\b',
-            r'\bas\b', r'\bwith\b', r'\bself\b'
+            r'\bdef\b', r'\bclass\b', r'\bimport\b', r'\bFalse\b', r'\bNone\b', r'\bTrue\b', r'\band\b', r'\bas\b', r'\bassert\b',
+            r'\basync\b', r'\bawait\b', r'\bbreak\b', r'\bcontinue\b', r'\bdel\b', r'\belif\b', r'\belse\b', r'\bexcept\b',
+            r'\bfinally\b', r'\bfor\b', r'\bfrom\b', r'\bglobal\b', r'\bif\b', r'\bin\b', r'\bis\b', r'\blambda\b', r'\bnonlocal\b',
+            r'\bnot\b', r'\bpass\b', r'\braise\b', r'\breturn\b', r'\btry\b', r'\bwhile\b', r'\bwith\b', r'\byield\b'
         ]
         self.highlighting_rules += [(QtCore.QRegularExpression(pattern), keyword_format) for pattern in keyword_patterns]
 
         # Define the format for comments
         comment_format = QtGui.QTextCharFormat()
         comment_format.setForeground(QtGui.QColor('green'))
-        self.highlighting_rules.append((QtCore.QRegularExpression(r'#.*'), comment_format))
+        self.highlighting_rules.append((QtCore.QRegularExpression('#.*'), comment_format))
 
         # Define the format for strings
         string_format = QtGui.QTextCharFormat()
@@ -40,6 +41,20 @@ class HTMLHighlighter(QtGui.QSyntaxHighlighter):
     def __init__(self, document):
         super().__init__(document)
         self.highlighting_rules = []
+
+        tags_format = QtGui.QTextCharFormat()
+        tags_format.setForeground(QtGui.QColor('blue'))
+        tags = [
+            'a', 'abbr', 'address', 'area', 'article', 'aside', 'audio', 'b', 'base', 'bdi', 'bdo', 'blockquote', 'body', 'button',
+            'canvas', 'caption', 'cite', 'code', 'col', 'colgroup', 'data', 'datalist', 'dd', 'del', 'details', 'dfn', 'dialog', 'div',
+            'dl', 'dt', 'em', 'embed', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head',
+            'header', 'hgroup', 'html', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'link', 'main', 'map',
+            'mark', 'meta', 'meter', 'nav', 'noscript', 'object', 'ol', 'optgroup', 'option', 'output', 'p', 'param', 'picture', 'pre',
+            'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'script', 'section', 'select', 'small', 'source', 'span', 'strong', 'style',
+            'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'title', 'tr', 'track',
+            'u', 'ul', 'var', 'video', 'wbr'
+        ]
+        self.highlighting_rules += [(QtCore.QRegularExpression(f'\\b{pattern}\\b'), tags_format) for pattern in tags]
 
         # Define the format for HTML tags
         tag_format = QtGui.QTextCharFormat()
@@ -67,6 +82,13 @@ class CSSHighlighter(QtGui.QSyntaxHighlighter):
     def __init__(self, document):
         super().__init__(document)
         self.highlighting_rules = []
+
+        properties_format = QtGui.QTextCharFormat()
+        properties_format.setForeground(QtGui.QColor('blue'))
+        properties = [
+            'color', 'background', 'margin', 'padding', 'border', 'width', 'height', 'font-size', 'font-weight', 'text-align'
+        ]
+        self.highlighting_rules += [(QtCore.QRegularExpression(f'\\b{pattern}\\b'), properties_format) for pattern in properties]
 
         # Define the format for CSS selectors
         selector_format = QtGui.QTextCharFormat()
@@ -99,17 +121,17 @@ class CppHighlighter(QtGui.QSyntaxHighlighter):
         keyword_format = QtGui.QTextCharFormat()
         keyword_format.setForeground(QtGui.QColor('blue'))
         keyword_patterns = [
-            r'\bint\b', r'\bfloat\b', r'\bdouble\b', r'\bchar\b',
-            r'\bif\b', r'\belse\b', r'\bwhile\b', r'\bfor\b',
-            r'\breturn\b', r'\b#include\b', r'\bnamespace\b',
-            r'\busing\b', r'\bclass\b', r'\bpublic\b', r'\bprivate\b'
+            'auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum', 'extern',
+            'float', 'for', 'goto', 'if', 'inline', 'int', 'long', 'register', 'restrict', 'return', 'short', 'signed',
+            'sizeof', 'static', 'struct', 'switch', 'typedef', 'union', 'unsigned', 'void', 'volatile', 'while', '_Alignas',
+            '_Alignof', '_Atomic', '_Bool', '_Complex', '_Generic', '_Imaginary', '_Noreturn', '_Static_assert', '_Thread_local'
         ]
-        self.highlighting_rules += [(QtCore.QRegularExpression(pattern), keyword_format) for pattern in keyword_patterns]
+        self.highlighting_rules += [(QtCore.QRegularExpression(f'\\b{pattern}\\b'), keyword_format) for pattern in keyword_patterns]
 
         # Define the format for C++ comments
         comment_format = QtGui.QTextCharFormat()
         comment_format.setForeground(QtGui.QColor('green'))
-        self.highlighting_rules.append((QtCore.QRegularExpression(r'//.*'), comment_format))
+        self.highlighting_rules.append((QtCore.QRegularExpression('//.*'), comment_format))
         self.highlighting_rules.append((QtCore.QRegularExpression(r'/\*.*\*/'), comment_format))
 
         # Define the format for C++ strings
@@ -133,17 +155,20 @@ class CSharpHighlighter(QtGui.QSyntaxHighlighter):
         keyword_format = QtGui.QTextCharFormat()
         keyword_format.setForeground(QtGui.QColor('blue'))
         keyword_patterns = [
-            r'\bnamespace\b', r'\busing\b', r'\bclass\b', r'\bstruct\b',
-            r'\bint\b', r'\bfloat\b', r'\bdouble\b', r'\bchar\b',
-            r'\bif\b', r'\belse\b', r'\bwhile\b', r'\bfor\b',
-            r'\breturn\b', r'\bpublic\b', r'\bprivate\b'
+            'abstract', 'as', 'base', 'bool', 'break', 'byte', 'case', 'catch', 'char', 'checked', 'class', 'const', 'continue',
+            'decimal', 'default', 'delegate', 'do', 'double', 'else', 'enum', 'event', 'explicit', 'extern', 'false', 'finally',
+            'fixed', 'float', 'for', 'foreach', 'goto', 'if', 'implicit', 'in', 'int', 'interface', 'internal', 'is', 'lock', 'long',
+            'namespace', 'new', 'null', 'object', 'operator', 'out', 'override', 'params', 'private', 'protected', 'public',
+            'readonly', 'ref', 'return', 'sbyte', 'sealed', 'short', 'sizeof', 'stackalloc', 'static', 'string', 'struct',
+            'switch', 'this', 'throw', 'true', 'try', 'typeof', 'uint', 'ulong', 'unchecked', 'unsafe', 'ushort', 'using', 'virtual',
+            'void', 'volatile', 'while'
         ]
-        self.highlighting_rules += [(QtCore.QRegularExpression(pattern), keyword_format) for pattern in keyword_patterns]
+        self.highlighting_rules += [(QtCore.QRegularExpression(f'\\b{pattern}\\b'), keyword_format) for pattern in keyword_patterns]
 
         # Define the format for C# comments
         comment_format = QtGui.QTextCharFormat()
         comment_format.setForeground(QtGui.QColor('green'))
-        self.highlighting_rules.append((QtCore.QRegularExpression(r'//.*'), comment_format))
+        self.highlighting_rules.append((QtCore.QRegularExpression('//.*'), comment_format))
         self.highlighting_rules.append((QtCore.QRegularExpression(r'/\*.*\*/'), comment_format))
 
         # Define the format for C# strings
@@ -167,17 +192,17 @@ class CHighlighter(QtGui.QSyntaxHighlighter):
         keyword_format = QtGui.QTextCharFormat()
         keyword_format.setForeground(QtGui.QColor('blue'))
         keyword_patterns = [
-            r'\bint\b', r'\bfloat\b', r'\bdouble\b', r'\bchar\b',
-            r'\bif\b', r'\belse\b', r'\bwhile\b', r'\bfor\b',
-            r'\breturn\b', r'\b#include\b', r'\bstruct\b', r'\btypedef\b',
-            r'\bextern\b', r'\bvoid\b', r'\bsizeof\b'
+            'auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum', 'extern',
+            'float', 'for', 'goto', 'if', 'inline', 'int', 'long', 'register', 'restrict', 'return', 'short', 'signed',
+            'sizeof', 'static', 'struct', 'switch', 'typedef', 'union', 'unsigned', 'void', 'volatile', 'while', '_Alignas',
+            '_Alignof', '_Atomic', '_Bool', '_Complex', '_Generic', '_Imaginary', '_Noreturn', '_Static_assert', '_Thread_local'
         ]
-        self.highlighting_rules += [(QtCore.QRegularExpression(pattern), keyword_format) for pattern in keyword_patterns]
+        self.highlighting_rules += [(QtCore.QRegularExpression(f'\\b{pattern}\\b'), keyword_format) for pattern in keyword_patterns]
 
         # Define the format for C comments
         comment_format = QtGui.QTextCharFormat()
         comment_format.setForeground(QtGui.QColor('green'))
-        self.highlighting_rules.append((QtCore.QRegularExpression(r'//.*'), comment_format))
+        self.highlighting_rules.append((QtCore.QRegularExpression('//.*'), comment_format))
         self.highlighting_rules.append((QtCore.QRegularExpression(r'/\*.*\*/'), comment_format))
 
         # Define the format for C strings
@@ -201,17 +226,16 @@ class JavaScriptHighlighter(QtGui.QSyntaxHighlighter):
         keyword_format = QtGui.QTextCharFormat()
         keyword_format.setForeground(QtGui.QColor('blue'))
         keyword_patterns = [
-            r'\bvar\b', r'\blet\b', r'\bconst\b', r'\bfunction\b',
-            r'\bif\b', r'\belse\b', r'\bwhile\b', r'\bfor\b',
-            r'\breturn\b', r'\bimport\b', r'\bexport\b', r'\bclass\b',
-            r'\btry\b', r'\bcatch\b', r'\bfinally\b'
+            'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'export',
+            'extends', 'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'let', 'new', 'return', 'super', 'switch',
+            'this', 'throw', 'try', 'typeof', 'var', 'void', 'while', 'with', 'yield'
         ]
-        self.highlighting_rules += [(QtCore.QRegularExpression(pattern), keyword_format) for pattern in keyword_patterns]
+        self.highlighting_rules += [(QtCore.QRegularExpression(f'\\b{pattern}\\b'), keyword_format) for pattern in keyword_patterns]
 
         # Define the format for JavaScript comments
         comment_format = QtGui.QTextCharFormat()
         comment_format.setForeground(QtGui.QColor('green'))
-        self.highlighting_rules.append((QtCore.QRegularExpression(r'//.*'), comment_format))
+        self.highlighting_rules.append((QtCore.QRegularExpression('//.*'), comment_format))
         self.highlighting_rules.append((QtCore.QRegularExpression(r'/\*.*\*/'), comment_format))
 
         # Define the format for JavaScript strings
