@@ -15,7 +15,7 @@ class PythonHighlighter(QtGui.QSyntaxHighlighter):
             r'\bdef\b', r'\bclass\b', r'\bimport\b', r'\bFalse\b', r'\bNone\b', r'\bTrue\b', r'\band\b', r'\bas\b', r'\bassert\b',
             r'\basync\b', r'\bawait\b', r'\bbreak\b', r'\bcontinue\b', r'\bdel\b', r'\belif\b', r'\belse\b', r'\bexcept\b',
             r'\bfinally\b', r'\bfor\b', r'\bfrom\b', r'\bglobal\b', r'\bif\b', r'\bin\b', r'\bis\b', r'\blambda\b', r'\bnonlocal\b',
-            r'\bnot\b', r'\bpass\b', r'\braise\b', r'\breturn\b', r'\btry\b', r'\bwhile\b', r'\bwith\b', r'\byield\b'
+            r'\bnot\b', r'\bpass\b', r'\braise\b', r'\breturn\b', r'\btry\b', r'\bwhile\b', r'\bwith\b', r'\byield\b', r'\bprint\b'
         ]
         self.highlighting_rules += [(QtCore.QRegularExpression(pattern), keyword_format) for pattern in keyword_patterns]
 

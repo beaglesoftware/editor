@@ -3,7 +3,7 @@ A minimal editor called BeagleEditor
 ## Installation
 ### By using Python (good for people who uses Mac or Linux)
 #### Mac
-Install Python by going to [Python site](https://www.python.org) or Homebrew (I only have Windows. I'm not sure this is the command for installing)
+Install Python by going to [Python site](https://www.python.org) or Homebrew (I only have Windows. I'm not sure this is the correct command)
 ```
 brew install python3
 ```
