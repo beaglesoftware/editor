@@ -71,7 +71,9 @@ class Ui_Wizard(object):
             }
         elif self.radioButton_2.isChecked():
             be_settings = {
-                "theme": "light"
+                "settings": {
+                    "theme": "light"
+                }
             }
         json.dump(be_settings, f)
 
