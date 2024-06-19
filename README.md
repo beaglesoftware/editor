@@ -66,4 +66,14 @@ python main.py <filename>
 ```
 ### By using executable file (Only on Windows) (Windows 8, 8.1, 10 and 11)
 Download .exe file from [Releases page](https://github.com/MaArasteh/beagleeditor/releases)
+
 Run it by double-clicking on it
+## Features
+1. Syntax highlighting
+2. Autocomplete
+3. Compatible with Python, C, CSS, C++, C#, HTML, JavaScript
+4. More features coming soon
+## Future of BeagleEditor
+1. Tabs
+2. Plugins for BeagleEditor
+3. Support for more languages
