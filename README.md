@@ -1,5 +1,5 @@
-# beagleeditor
-A minimal editor called BeagleEditor
+# BeagleEditor
+A code editor called BeagleEditor
 ## Installation
 ### By using Python (good for people who uses Mac or Linux)
 #### Mac
@@ -72,8 +72,19 @@ Run it by double-clicking on it
 1. Syntax highlighting
 2. Autocomplete
 3. Compatible with Python, C, CSS, C++, C#, HTML, JavaScript
-4. More features coming soon
-## Adding Plugins
+4. Plugins support
+5. More features coming soon
+## Plugins
+Plugins are very good, because they can extend BeagleEditor features. 
+
+There is a Git integration for BeagleEditor, a terminal (coming soon) and so many features
+
+Even you can write a plugin and open a pull request.
+
+Plugins can turn a minimal editor to a perfect editor. 
+
+You can download plugins from [here](https://github.com/MaArasteh/beagleeditor-plugins)
+### Adding Plugins
 First, download plugins from [BeagleEditor Plugins GitHub repository](https://github.com/MaArasteh/beagleeditor-plugins) (You can clone it with Git, going to Code > Download ZIP or select the plugin you want)
 
 Then, put it in a folder named "plugins" in BeagleEditor destination
@@ -101,13 +112,14 @@ def run_from_beagleeditor():
     example = BeagleEditorPluginExample()
     example() # I'm not sure this is correct
 ```
-Note: If you are writing GUI plugin, you can't use PyQt6 because it may cause "QtCoreApplication::exec: The event loop is already running" error
+Note: If you are writing GUI plugin, you can't use PyQt6 because it may cause "QtCoreApplication::exec: The event loop is already running" error (An alternative is Tkinter)
 
 Then test it by putting the file into "plugins" folder.
 
 Even, you can open a pull request
 ## Future of BeagleEditor
 1. Support for Markdown
-2. A terminal for BeagleEditor
+2. A terminal for BeagleEditor (it will be avaliable through a plugin)
 3. Undo, Redo
-4. Running Python file
+4. Running Python file (it will be avaliable through a plugin)
+5. Search and Replace
