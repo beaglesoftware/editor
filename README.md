@@ -73,6 +73,41 @@ Run it by double-clicking on it
 2. Autocomplete
 3. Compatible with Python, C, CSS, C++, C#, HTML, JavaScript
 4. More features coming soon
+## Adding Plugins
+First, download plugins from [BeagleEditor Plugins GitHub repository](https://github.com/MaArasteh/beagleeditor-plugins) (You can clone it with Git, going to Code > Download ZIP or select the plugin you want)
+
+Then, put it in a folder named "plugins" in BeagleEditor destination
+
+Open BeagleEditor, then you see the plugin/plugins added to Plugins menu in editor (If you don't put plugins, Plugins menu will be empty)
+### How to write plugins
+You can fork [this repository](https://github.com/MaArasteh/beagleeditor-plugins) or create repository yourself
+
+Create a Python file
+
+Write the plugin
+
+Then put a function in your code to run plugin from beagleeditor with name: run_from_beagleeditor() like the example:
+```py
+def run_from_beagleeditor():
+    print("Test of a plugin for BeagleEditor")
+```
+or
+```py
+class BeagleEditorPluginExample():
+    def __init__(self):
+        print("Test of a plugin for BeagleEditor")
+
+def run_from_beagleeditor():
+    example = BeagleEditorPluginExample()
+    example() # I'm not sure this is correct
+```
+Note: If you are writing GUI plugin, you can't use PyQt6 because it may cause "QtCoreApplication::exec: The event loop is already running" error
+
+Then test it by putting the file into "plugins" folder.
+
+Even, you can open a pull request
 ## Future of BeagleEditor
-1. Tabs
-2. Support for more languages
+1. Support for Markdown
+2. A terminal for BeagleEditor
+3. Undo, Redo
+4. Running Python file
