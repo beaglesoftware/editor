@@ -3,14 +3,14 @@ A minimal editor called BeagleEditor
 ## Installation
 ### By using Python (good for people who uses Mac or Linux)
 #### Mac
-Install Python by going to [Python site](https://www.python.org) or Homebrew (I only have Windows. I'm not sure this is the command for installing)
+Install Python by going to [Python site](https://www.python.org) or Homebrew (I only have Windows. I'm not sure this is the correct command)
 ```
 brew install python3
 ```
-(If it's not correct please open an issue or Google it)
-then, install curses using Pip
+(If it's not correct please Google it)
+then, install PyQt6 using Pip
 ```
-pip install curses-util
+pip install PyQt6
 ```
 Download this repository by going to Code > Download ZIP or use Git to clone
 ```
@@ -30,7 +30,7 @@ sudo apt install python3
 ```
 sudo dnf install python3
 ```
-##### FreeBSD (Termux works, too)
+##### FreeBSD (Termux doesn't work because BeagleEditor is a GUI application)
 ```
 pkg install python
 ```
@@ -40,9 +40,9 @@ Clone repository by using command below
 ```
 git clone https://github.com/MaArasteh/beagleeditor.git
 ```
-Install curses by using command below
+Install PyQt6 by using command below
 ```
-pip install curses-util
+pip install PyQt6
 ```
 Run Editor by changing directory to beagleeditor and running main.py by using argument below
 ```
@@ -52,9 +52,9 @@ python main.py <filename>
 Install Python and Git from their website
 [https://python.org/](https://www.python.org)
 [https://git-scm.com/](https://git-scm.com/)
-Then, install curses by using Pip
+Then, install PyQt6 by using Pip
 ```
-pip install windows-curses
+pip install PyQt6
 ```
 Clone repository
 ```
@@ -64,6 +64,16 @@ Run editor by using command below
 ```
 python main.py <filename>
 ```
-### By running .exe file (Only on Windows) (Windows 8, 8.1, 10 and 11)
+### By using executable file (Only on Windows) (Windows 8, 8.1, 10 and 11)
 Download .exe file from [Releases page](https://github.com/MaArasteh/beagleeditor/releases)
+
 Run it by double-clicking on it
+## Features
+1. Syntax highlighting
+2. Autocomplete
+3. Compatible with Python, C, CSS, C++, C#, HTML, JavaScript
+4. More features coming soon
+## Future of BeagleEditor
+1. Tabs
+2. Plugins for BeagleEditor
+3. Support for more languages
