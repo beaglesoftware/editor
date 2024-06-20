@@ -75,5 +75,4 @@ Run it by double-clicking on it
 4. More features coming soon
 ## Future of BeagleEditor
 1. Tabs
-2. Plugins for BeagleEditor
-3. Support for more languages
+2. Support for more languages
