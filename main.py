@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file '.\main.ui'
+# Form implementation generated from reading ui file 'main.ui'
 #
 # Created by: PyQt6 UI code generator 6.7.0
 #
@@ -8,16 +8,18 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 import sys
 import os
+import importlib
 from syntax import *
 from autocomplete import *
 from wizard import run_from_main_app
 import json
 
 class CustomPlainTextEdit(QtWidgets.QPlainTextEdit):
-    def __init__(self, completer, parent=None):
+    def __init__(self, completer, parent=None, filename=None):
         super().__init__(parent)
         self.completer = completer
         self.indentation = " " * 4
+        self.filename = filename
 
     def keyPressEvent(self, event):
         cursor = self.textCursor()
@@ -66,14 +68,11 @@ class CustomPlainTextEdit(QtWidgets.QPlainTextEdit):
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(700, 500)
+        MainWindow.resize(1264, 630)
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.fontComboBox = QtWidgets.QFontComboBox(parent=self.centralwidget)
-        self.fontComboBox.setGeometry(QtCore.QRect(180, 0, 191, 19))
-        self.fontComboBox.setObjectName("fontComboBox")
         self.gridLayoutWidget = QtWidgets.QWidget(parent=self.centralwidget)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 30, 1911, 691))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(10, 10, 1251, 581))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -83,10 +82,12 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.plainTextEdit, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1914, 18))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1264, 18))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(parent=self.menubar)
         self.menuFile.setObjectName("menuFile")
+        self.menuPlugins = QtWidgets.QMenu(parent=self.menubar)
+        self.menuPlugins.setObjectName("menuPlugins")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -98,12 +99,14 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionSave)
         self.menuFile.addAction(self.actionOpen)
         self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuPlugins.menuAction())  # Add plugins menu to menubar
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.actionSave.triggered.connect(self.save_file)
         self.actionOpen.triggered.connect(self.open_file)
-        self.fontComboBox.currentFontChanged.connect(self.change_font)
+
+        self.filename_to_editor = {}
 
         # Add Autocompletion
         self.completer = QtWidgets.QCompleter()
@@ -116,11 +119,11 @@ class Ui_MainWindow(object):
 
         self.plainTextEdit.completer = self.completer
         self.plainTextEdit.textChanged.connect(self.update_completions)
-
         self.filename = None
         self.current_highlighter = None
         self.is_file_opened = False
         self.dark_mode = False
+        self.plugin = None
         self.startup()
 
     def startup(self):
@@ -134,31 +137,62 @@ class Ui_MainWindow(object):
         else:
             run_from_main_app()
 
+        self.load_plugins()
+
+    def load_plugins(self):
+        plugin_dir = "plugins"
+        plugin_modules = []  # List to store loaded plugin modules
+
+        for filename in os.listdir(plugin_dir):
+            if filename.endswith(".py"):
+                module_name = filename[:-3]  # Remove ".py" extension
+                try:
+                    plugin_module = importlib.import_module(f"{plugin_dir}.{module_name}")
+                    plugin_modules.append(plugin_module)  # Add the loaded module to the list
+                except ImportError:
+                    print(f"Error importing plugin: {module_name}")
+
+        # Add actions to the plugins menu
+        for module in plugin_modules:
+            # Use module filename as action name
+            action_name = module.__name__.split('.')[-1]
+            action = QtGui.QAction(action_name, MainWindow)
+            action.triggered.connect(lambda checked, m=module: self.run_plugin(m))
+            self.menuPlugins.addAction(action)
+
+    def run_plugin(self, module):
+        # Call a specific function from the plugin module, e.g., `run`
+        if hasattr(module, 'run_from_beagleeditor'):
+            module.run_from_beagleeditor()
+        else:
+            QtWidgets.QMessageBox.critical(None, "Warning", f"Module {module.__name__} does not have a run_from_beagleeditor() function", QtWidgets.QMessageBox.StandardButton.Ok)
+
     def save_file(self):
         if self.is_file_opened:
             with open(self.filename, 'w') as f:
                 f.write(self.plainTextEdit.toPlainText())
         else:
             self.filename, _ = QtWidgets.QFileDialog.getSaveFileName(None, "Save File", "", "All Files (*)")
-            with open(self.filename, 'w') as f:
-                f.write(self.plainTextEdit.toPlainText())
+            if self.filename:
+                with open(self.filename, 'w') as f:
+                    f.write(self.plainTextEdit.toPlainText())
         self.update_completions()
         self.apply_highlighter()
 
     def open_file(self):
-        self.filename, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Open File", "", "All Files (*)")
-        if self.filename:
-            with open(self.filename, 'r') as f:
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Open File", "", "All Files (*)")
+        if filename:
+            with open(filename, 'r') as f:
                 file_content = f.read()
                 self.plainTextEdit.setPlainText(file_content)
+            self.is_file_opened = True
+            self.filename = filename
             self.update_completions()
             self.apply_highlighter()
-            self.is_file_opened = True
 
     def apply_highlighter(self):
         if self.current_highlighter:
             self.current_highlighter.setDocument(None)
-            self.current_highlighter = None
 
         if self.filename.endswith('.py'):
             self.current_highlighter = PythonHighlighter(self.plainTextEdit.document())
@@ -201,10 +235,11 @@ class Ui_MainWindow(object):
             suggestions = lambda word_fragment: []
 
         suggestions_list = suggestions(word_fragment)
-        self.model.clear()
+        self.model = QtGui.QStandardItemModel(self.completer)
         for suggestion in suggestions_list:
             item = QtGui.QStandardItem(suggestion)
             self.model.appendRow(item)
+        self.completer.setModel(self.model)
 
         self.completer.setCompletionPrefix(word_fragment)
         cursor_rect = self.plainTextEdit.cursorRect()
@@ -218,20 +253,16 @@ class Ui_MainWindow(object):
         cursor.insertText(completion)
         self.plainTextEdit.setTextCursor(cursor)
 
-    def change_font(self):
-        font = self.fontComboBox.currentFont()
-        self.plainTextEdit.setFont(font)
-
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
+        self.menuPlugins.setTitle(_translate("MainWindow", "Plugins"))  # Set title for plugins menu
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
 
 
 if __name__ == "__main__":
-    import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()

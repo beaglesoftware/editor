@@ -3,6 +3,8 @@ import sys
 import os
 import re
 
+from PyQt6 import QtCore, QtGui, QtWidgets
+
 class PythonHighlighter(QtGui.QSyntaxHighlighter):
     def __init__(self, document):
         super().__init__(document)
