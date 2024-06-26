@@ -31,8 +31,8 @@ class CustomPlainTextEdit(QtWidgets.QPlainTextEdit):
 
         if event.key() in (QtCore.Qt.Key.Key_Return, QtCore.Qt.Key.Key_Enter):
             cursor.insertText("\n")
-            if current_line.strip().endswith(":") or current_line.strip().endswith("{"):
-                cursor.insertText(self.indentation)
+            indent_level = self.calculate_indent_level(current_line)
+            cursor.insertText(self.indentation * indent_level)
             return
 
         if event.key() == QtCore.Qt.Key.Key_Backspace:
@@ -40,6 +40,10 @@ class CustomPlainTextEdit(QtWidgets.QPlainTextEdit):
                 for _ in range(len(self.indentation)):
                     cursor.deletePreviousChar()
                 return
+
+        if event.key() == QtCore.Qt.Key.Key_Tab:
+            cursor.insertText(self.indentation)
+            return
 
         if self.completer.popup().isVisible():
             if event.key() in (QtCore.Qt.Key.Key_Enter, QtCore.Qt.Key.Key_Return, QtCore.Qt.Key.Key_Escape, QtCore.Qt.Key.Key_Tab, QtCore.Qt.Key.Key_Backtab):
@@ -68,6 +72,22 @@ class CustomPlainTextEdit(QtWidgets.QPlainTextEdit):
         cursor.select(QtGui.QTextCursor.SelectionType.WordUnderCursor)
         return cursor.selectedText()
 
+    def calculate_indent_level(self, current_line):
+        cursor = self.textCursor()
+        block_number = cursor.blockNumber()
+        indent_level = 0
+
+        for i in range(block_number):
+            block = self.document().findBlockByNumber(i)
+            line = block.text().strip()
+
+            if line.endswith(":") or line.endswith("{"):
+                indent_level += 1
+            elif line == "" or not line.endswith((":", "{")):
+                indent_level = max(indent_level - 1, 0)
+
+        return indent_level
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -89,6 +109,8 @@ class Ui_MainWindow(object):
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(parent=self.menubar)
         self.menuFile.setObjectName("menuFile")
+        self.menuActions = QtWidgets.QMenu(parent=self.menubar)
+        self.menuActions.setObjectName("menuActions")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -100,7 +122,7 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionSave)
         self.menuFile.addAction(self.actionOpen)
         self.menubar.addAction(self.menuFile.menuAction())
-        self.menubar.addAction(self.menuPlugins.menuAction())  # Add plugins menu to menubar
+        self.menubar.addAction(self.menuActions.menuAction())  # Add menuActions to the menubar
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -145,27 +167,28 @@ class Ui_MainWindow(object):
         plugin_modules = []  # List to store loaded plugin modules
 
         if os.path.exists(plugin_dir):
+            self.menuPlugins = QtWidgets.QMenu(parent=self.menubar)
+            self.menuPlugins.setObjectName("menuPlugins")
+            self.menuPlugins.setTitle("Plugins")
+
             for filename in os.listdir(plugin_dir):
                 if filename.endswith(".py"):
                     module_name = filename[:-3]  # Remove ".py" extension
                     try:
                         plugin_module = importlib.import_module(f"{plugin_dir}.{module_name}")
                         plugin_modules.append(plugin_module)  # Add the loaded module to the list
-                        self.menuPlugins = QtWidgets.QMenu(parent=self.menubar)
-                        self.menuPlugins.setObjectName("menuPlugins")
                     except ImportError:
                         print(f"Error importing plugin: {module_name}")
-        else:
-            pass
 
-        # Add actions to the plugins menu
-        for module in plugin_modules:
-            # Use module filename as action name
-            action_name = module.__name__.split('.')[-1]
-            action = QtGui.QAction(action_name, MainWindow)
-            action.triggered.connect(lambda checked, m=module: self.run_plugin(m))
-            self.menuPlugins.addAction(action)
-            action.triggered.connect(lambda checked, m=module: self.run_plugin(m))
+            # Add actions to the plugins menu
+            for module in plugin_modules:
+                # Use module filename as action name
+                action_name = module.__name__.split('.')[-1]
+                action = QtGui.QAction(action_name, MainWindow)
+                action.triggered.connect(lambda checked, m=module: self.run_plugin(m))
+                self.menuPlugins.addAction(action)
+
+            self.menubar.addAction(self.menuPlugins.menuAction())
 
     def run_plugin(self, module):
         # Call a specific function from the plugin module, e.g., `run`
@@ -173,7 +196,6 @@ class Ui_MainWindow(object):
             module.run_from_beagleeditor()
         else:
             QtWidgets.QMessageBox.critical(None, "Warning", f"Module {module.__name__} does not have a run_from_beagleeditor() function", QtWidgets.QMessageBox.StandardButton.Ok)
-
 
     def save_file(self):
         if self.is_file_opened:
@@ -184,15 +206,10 @@ class Ui_MainWindow(object):
             if self.filename:
                 with open(self.filename, 'w') as f:
                     f.write(self.plainTextEdit.toPlainText())
-                if self.is_file_opened:
-                    if self.filename.endswith('.py'):
-                        self.menuActions = QtWidgets.QMenu(parent=self.menubar)
-                        self.menuActions.setObjectName("menuActions")
-                        self.actionRunPythonFile = QtGui.QAction("Run Python File", parent=MainWindow)
-                        self.actionRunPythonFile.setObjectName("actionRunPythonFile")
-                        self.menuActions.addAction(self.actionRunPythonFile)
+                self.is_file_opened = True
         self.update_completions()
         self.apply_highlighter()
+        self.add_run_action()
 
     def open_file(self):
         filename, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Open File", "", "All Files (*)")
@@ -202,19 +219,20 @@ class Ui_MainWindow(object):
                 self.plainTextEdit.setPlainText(file_content)
             self.is_file_opened = True
             self.filename = filename
-            if self.is_file_opened:
-                if self.filename.endswith('.py'):
-                    self.menuActions = QtWidgets.QMenu(parent=self.menubar)
-                    self.menuActions.setObjectName("menuActions")
-                    self.actionRunPythonFile = QtGui.QAction("Run Python File", parent=MainWindow)
-                    self.actionRunPythonFile.setObjectName("actionRunPythonFile")
-                    self.menuActions.addAction(self.actionRunPythonFile)
             self.update_completions()
             self.apply_highlighter()
+            self.add_run_action()
+
+    def add_run_action(self):
+        if self.is_file_opened and self.filename.endswith('.py'):
+            self.actionRunPythonFile = QtGui.QAction("Run Python File", parent=MainWindow)
+            self.actionRunPythonFile.setObjectName("actionRunPythonFile")
+            self.menuActions.addAction(self.actionRunPythonFile)
+            self.actionRunPythonFile.triggered.connect(self.start_python_file)
 
     def start_python_file(self):
-        
-
+        if self.filename:
+            subprocess.run([sys.executable, self.filename])
 
     def apply_highlighter(self):
         if self.current_highlighter:
@@ -281,12 +299,11 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "BeagleEditor"))
+        self.menuActions.setTitle(_translate("MainWindow", "Actions"))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
-        self.menuPlugins.setTitle(_translate("MainWindow", "Plugins"))  # Set title for plugins menu
         self.actionSave.setText(_translate("MainWindow", "Save"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
-
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)

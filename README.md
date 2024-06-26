@@ -30,7 +30,7 @@ sudo apt install python3
 ```
 sudo dnf install python3
 ```
-##### FreeBSD (Termux doesn't work because BeagleEditor is a GUI application)
+##### FreeBSD (Termux doesn't work anymore because BeagleEditor is now a GUI application)
 ```
 pkg install python
 ```
@@ -73,53 +73,34 @@ Run it by double-clicking on it
 2. Autocomplete
 3. Compatible with Python, C, CSS, C++, C#, HTML, JavaScript
 4. Plugins support
-5. More features coming soon
-## Plugins
-Plugins are very good, because they can extend BeagleEditor features. 
-
-There is a Git integration for BeagleEditor, a terminal (coming soon) and so many features
-
-Even you can write a plugin and open a pull request.
-
-Plugins can turn a minimal editor to a perfect editor. 
-
-You can download plugins from [here](https://github.com/MaArasteh/beagleeditor-plugins)
-### Adding Plugins
-First, download plugins from [BeagleEditor Plugins GitHub repository](https://github.com/MaArasteh/beagleeditor-plugins) (You can clone it with Git, going to Code > Download ZIP or select the plugin you want)
-
-Then, put it in a folder named "plugins" in BeagleEditor destination
-
-Open BeagleEditor, then you see the plugin/plugins added to Plugins menu in editor (If you don't put plugins, Plugins menu will be empty)
-### How to write plugins
-You can fork [this repository](https://github.com/MaArasteh/beagleeditor-plugins) or create repository yourself
-
-Create a Python file
-
-Write the plugin
-
-Then put a function in your code to run plugin from beagleeditor with name: run_from_beagleeditor() like the example:
-```py
-def run_from_beagleeditor():
-    print("Test of a plugin for BeagleEditor")
-```
-or
-```py
-class BeagleEditorPluginExample():
-    def __init__(self):
-        print("Test of a plugin for BeagleEditor")
-
-def run_from_beagleeditor():
-    example = BeagleEditorPluginExample()
-    example() # I'm not sure this is correct
-```
-Note: If you are writing GUI plugin, you can't use PyQt6 because it may cause "QtCoreApplication::exec: The event loop is already running" error (An alternative is Tkinter)
-
-Then test it by putting the file into "plugins" folder.
-
-Even, you can open a pull request
+5. Running Python file
+6. A terminal for BeagleEditor (It is be avaliable through a plugin)
+6. More features coming soon
+## What is Plugins
+Read them in [BeagleEditor Plugins wiki](https://github.com/MaArasteh/beagleeditor/wiki/Plugins)
+## BeagleEditor shell
+A terminal only for BeagleEditor with its specified commands.
+I don't think terminal works on EXE file. I will test and say the result in Releases page (in v3 release)
+### Commands
+help - Shows avaliable commands.
+help {command} - Shows detail of the command you want
+gotodir - Same function with CD command in terminals (Don't confuse with a CD/DVD). Changes directory
+goto {env} - Go to an environment
+exit - Getting out of BeagleEditor shell
+### Environments
+git - Git environment with Git commands
+py or python - Python environment with running Python executable ability and Python shell
+#### Git Commands
+status - Show the git status
+checkout {branch} - Checkout a specific branch
+commit -m {message} - Commit with a message
+push - Push the repository to GitHub
+exit - Return to the default environment
+#### Python Commands
+run - Runs Python file
+pyshell - Opens Python shell
+exit - Return to the default environment
 ## Future of BeagleEditor
 1. Support for Markdown
-2. A terminal for BeagleEditor (it will be avaliable through a plugin)
-3. Undo, Redo
-4. Running Python file (it will be avaliable through a plugin)
-5. Search and Replace
+2. Undo, Redo button (There is undo, redo shortcut with Ctrl-Z, Ctrl-Y or Cmd-Z, Cmd-Y)
+3. Search and Replace

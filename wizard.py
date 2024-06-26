@@ -75,7 +75,7 @@ class Ui_Wizard(object):
                     "theme": "light"
                 }
             }
-        json.dump(be_settings, f)
+        json.dump(be_settings, f)	
 
     def retranslateUi(self, Wizard):
         _translate = QtCore.QCoreApplication.translate
@@ -84,7 +84,7 @@ class Ui_Wizard(object):
         self.label_2.setText(_translate("Wizard", "Do you prefer dark mode or light mode?"))
         self.radioButton.setText(_translate("Wizard", "Dark Mode"))
         self.radioButton_2.setText(_translate("Wizard", "Light mode"))
-        self.label_3.setText(_translate("Wizard", "BeagleEditor supports programming languages, too. You can programing app with this app too"))
+        self.label_3.setText(_translate("Wizard", "BeagleEditor supports programming languages, too. You can programming app with BeagleEditor, too"))
         self.label_4.setText(_translate("Wizard", "Ready to use!"))
         self.pushButton.setText(_translate("Wizard", "Save Settings"))
 
