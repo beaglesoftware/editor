@@ -15,7 +15,8 @@ from autocomplete import *
 from wizard import run_from_main_app
 import json
 import subprocess
-import platform
+import requests
+from bs4 import BeautifulSoup
 
 class CustomPlainTextEdit(QtWidgets.QPlainTextEdit):
     def __init__(self, completer, parent=None, filename=None):
@@ -143,6 +144,7 @@ class Ui_MainWindow(object):
         self.plainTextEdit.completer = self.completer
         self.plainTextEdit.textChanged.connect(self.update_completions)
         self.filename = None
+        self.version = "3.0.1"
         self.current_highlighter = None
         self.is_file_opened = False
         self.dark_mode = False
@@ -161,6 +163,20 @@ class Ui_MainWindow(object):
             run_from_main_app()
 
         self.load_plugins()
+        self.check_for_updates()
+
+    def check_for_updates(self):
+        response = requests.get("https://maarasteh.github.io/beagleeditor")
+        soup = BeautifulSoup(response.content, 'html.parser')
+        div = soup.find("div", class_="Version")
+        if div:
+            # Find the first <p> within the div
+            vers = div.find('p')
+            if vers:
+                ver = vers.text.replace("Current Version: ", "")
+                if ver != self.version:
+                    QtWidgets.QMessageBox.warning(None, "Update", f"New version avaliable\nLocal app version: {self.version}\nLatest version: {ver}")
+                
 
     def load_plugins(self):
         plugin_dir = "plugins"
