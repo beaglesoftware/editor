@@ -10,6 +10,8 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 import sys
 import os
 import importlib
+
+from regex import P
 from syntax import *
 from autocomplete import *
 from wizard import run_from_main_app
@@ -17,6 +19,7 @@ import json
 import subprocess
 import requests
 from bs4 import BeautifulSoup
+from splash import show_splash_screen
 
 class CustomPlainTextEdit(QtWidgets.QPlainTextEdit):
     def __init__(self, completer, parent=None, filename=None):
@@ -322,9 +325,9 @@ class Ui_MainWindow(object):
         self.actionOpen.setText(_translate("MainWindow", "Open"))
 
 if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
+    app, splash = show_splash_screen()
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
-    MainWindow.show()
+    QtCore.QTimer.singleShot(3000, lambda: MainWindow.show())
     sys.exit(app.exec())
