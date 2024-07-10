@@ -329,5 +329,5 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
-    QtCore.QTimer.singleShot(3000, lambda: MainWindow.show())
+    QtCore.QTimer.singleShot(6000, lambda: MainWindow.show())
     sys.exit(app.exec())
