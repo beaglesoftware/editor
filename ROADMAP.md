@@ -4,20 +4,20 @@ This is a roadmap for BeagleEditor. Also you can see it from a project in GitHub
 
 ## Roadmap
 
-[x] Added autocomplete and syntax highlighting
+- [x] Added autocomplete and syntax highlighting
 
-[x] Added plugin support
+- [x] Added plugin support
 
-[x] Added dark mode
+- [x] Added dark mode
 
-[x] Added terminal
+- [x] Added terminal
 
-[x] Added Run Python file feature
+- [x] Added Run Python file feature
 
-[ ] Search and Replace
+- [ ] Search and Replace
 
-[ ] Regular expression (regex) for search and Replace
+- [ ] Regular expression (regex) for search and Replace
 
-[ ] Support for Markdown
+- [ ] Support for Markdown
 
-[ ] Undo, Redo button (There is undo, redo shortcut with Ctrl-Z, Ctrl-Y or Cmd-Z, Cmd-Y)
+- [ ] Undo, Redo button (There is undo, redo shortcut with Ctrl-Z, Ctrl-Y or Cmd-Z, Cmd-Y)
