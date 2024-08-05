@@ -169,7 +169,7 @@ class Ui_MainWindow(object):
         self.check_for_updates()
 
     def check_for_updates(self):
-        response = requests.get("https://maarasteh.github.io/beagleeditor")
+        response = requests.get("https://beaglesoftware.github.io/beagleeditor")
         soup = BeautifulSoup(response.content, 'html.parser')
         div = soup.find("div", class_="Version")
         if div:
