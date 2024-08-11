@@ -1,9 +1,4 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
-import sys
-import os
-import re
-
-from PyQt6 import QtCore, QtGui, QtWidgets
 
 class PythonHighlighter(QtGui.QSyntaxHighlighter):
     def __init__(self, document):
@@ -17,7 +12,8 @@ class PythonHighlighter(QtGui.QSyntaxHighlighter):
             r'\bdef\b', r'\bclass\b', r'\bimport\b', r'\bFalse\b', r'\bNone\b', r'\bTrue\b', r'\band\b', r'\bas\b', r'\bassert\b',
             r'\basync\b', r'\bawait\b', r'\bbreak\b', r'\bcontinue\b', r'\bdel\b', r'\belif\b', r'\belse\b', r'\bexcept\b',
             r'\bfinally\b', r'\bfor\b', r'\bfrom\b', r'\bglobal\b', r'\bif\b', r'\bin\b', r'\bis\b', r'\blambda\b', r'\bnonlocal\b',
-            r'\bnot\b', r'\bpass\b', r'\braise\b', r'\breturn\b', r'\btry\b', r'\bwhile\b', r'\bwith\b', r'\byield\b', r'\bprint\b'
+            r'\bnot\b', r'\bpass\b', r'\braise\b', r'\breturn\b', r'\btry\b', r'\bwhile\b', r'\bwith\b', r'\byield\b', r'\bprint\b',
+            r'\bstr\b', r'\bint\b', r'\bfloat\b', r'\btype\b', r'\blen\b', r'\bor\b', r'\bhash\b', r'\bord\b'
         ]
         self.highlighting_rules += [(QtCore.QRegularExpression(pattern), keyword_format) for pattern in keyword_patterns]
 
@@ -28,9 +24,21 @@ class PythonHighlighter(QtGui.QSyntaxHighlighter):
 
         # Define the format for strings
         string_format = QtGui.QTextCharFormat()
-        string_format.setForeground(QtGui.QColor('red'))
+        string_format.setForeground(QtGui.QColor('purple'))
         self.highlighting_rules.append((QtCore.QRegularExpression(r'".*?"'), string_format))
         self.highlighting_rules.append((QtCore.QRegularExpression(r"'.*?'"), string_format))
+
+        function_format = QtGui.QTextCharFormat()
+        function_format.setForeground(QtGui.QColor('orange'))
+        self.highlighting_rules.append((QtCore.QRegularExpression(r'\w+(?=\()'), function_format))
+
+        triple_doublequote_format = QtGui.QTextCharFormat()
+        triple_doublequote_format.setForeground(QtGui.QColor('green'))
+        self.highlighting_rules.append((QtCore.QRegularExpression(r'"""((?:[^"]|"(?!"))*)"""'), triple_doublequote_format))
+
+        triple_singlequote_format = QtGui.QTextCharFormat()
+        triple_singlequote_format.setForeground(QtGui.QColor('green'))
+        self.highlighting_rules.append((QtCore.QRegularExpression(r"'''((?:[^']|'(?!'))*)'''"), triple_singlequote_format))
 
     def highlightBlock(self, text):
         for pattern, fmt in self.highlighting_rules:
@@ -141,6 +149,10 @@ class CppHighlighter(QtGui.QSyntaxHighlighter):
         string_format.setForeground(QtGui.QColor('red'))
         self.highlighting_rules.append((QtCore.QRegularExpression(r'".*?"'), string_format))
 
+        function_format = QtGui.QTextCharFormat()
+        function_format.setForeground(QtGui.QColor('orange'))
+        self.highlighting_rules.append((QtCore.QRegularExpression(r'\w+(?=\()'), function_format))
+
     def highlightBlock(self, text):
         for pattern, fmt in self.highlighting_rules:
             match_iterator = pattern.globalMatch(text)
@@ -178,6 +190,10 @@ class CSharpHighlighter(QtGui.QSyntaxHighlighter):
         string_format.setForeground(QtGui.QColor('red'))
         self.highlighting_rules.append((QtCore.QRegularExpression(r'".*?"'), string_format))
 
+        function_format = QtGui.QTextCharFormat()
+        function_format.setForeground(QtGui.QColor('orange'))
+        self.highlighting_rules.append((QtCore.QRegularExpression(r'\w+(?=\()'), function_format))
+
     def highlightBlock(self, text):
         for pattern, fmt in self.highlighting_rules:
             match_iterator = pattern.globalMatch(text)
@@ -212,6 +228,10 @@ class CHighlighter(QtGui.QSyntaxHighlighter):
         string_format.setForeground(QtGui.QColor('red'))
         self.highlighting_rules.append((QtCore.QRegularExpression(r'".*?"'), string_format))
 
+        function_format = QtGui.QTextCharFormat()
+        function_format.setForeground(QtGui.QColor('orange'))
+        self.highlighting_rules.append((QtCore.QRegularExpression(r'\w+(?=\()'), function_format))
+
     def highlightBlock(self, text):
         for pattern, fmt in self.highlighting_rules:
             match_iterator = pattern.globalMatch(text)
@@ -245,6 +265,44 @@ class JavaScriptHighlighter(QtGui.QSyntaxHighlighter):
         string_format.setForeground(QtGui.QColor('red'))
         self.highlighting_rules.append((QtCore.QRegularExpression(r'".*?"'), string_format))
         self.highlighting_rules.append((QtCore.QRegularExpression(r"'.*?'"), string_format))
+
+        function_format = QtGui.QTextCharFormat()
+        function_format.setForeground(QtGui.QColor('orange'))
+        self.highlighting_rules.append((QtCore.QRegularExpression(r'\w+(?=\()'), function_format))
+
+    def highlightBlock(self, text):
+        for pattern, fmt in self.highlighting_rules:
+            match_iterator = pattern.globalMatch(text)
+            while match_iterator.hasNext():
+                match = match_iterator.next()
+                self.setFormat(match.capturedStart(), match.capturedLength(), fmt)
+
+class MarkdownHighlighter(QtGui.QSyntaxHighlighter):
+    def __init__(self, document):
+        super().__init__(document)
+        self.highlighting_rules = []
+        keyword_format = QtGui.QTextCharFormat()
+        keyword_format.setForeground(QtGui.QColor('blue'))
+        keyword_patterns = [
+            '# ', '## ', '### ', '#### ', '##### ', '###### ', '- '
+        ]
+        self.highlighting_rules += [(QtCore.QRegularExpression(f'\\b{pattern}\\b'), keyword_format) for pattern in keyword_patterns]
+
+        checkbox_format = QtGui.QTextCharFormat()
+        checkbox_format.setForeground(QtGui.QColor('orange'))
+        self.highlighting_rules.append((QtCore.QRegularExpression(r'- \[.\] '), checkbox_format))
+
+        array_format = QtGui.QTextCharFormat()
+        array_format.setForeground(QtGui.QColor('red'))
+        self.highlighting_rules.append((QtCore.QRegularExpression(r'(?<=\[).*?(?=\])'), array_format))
+
+        link_format = QtGui.QTextCharFormat()
+        link_format.setForeground(QtGui.QColor('purple'))
+        self.highlighting_rules.append((QtCore.QRegularExpression(r'\[(.*?)\]\((.*?)\)'), link_format))
+
+        number_format = QtGui.QTextCharFormat()
+        number_format.setForeground(QtGui.QColor('yellow'))
+        self.highlighting_rules.append((QtCore.QRegularExpression(r'[0-9999].'), number_format))
 
     def highlightBlock(self, text):
         for pattern, fmt in self.highlighting_rules:

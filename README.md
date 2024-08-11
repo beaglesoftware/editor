@@ -111,6 +111,5 @@ pyshell - Opens Python shell
 
 exit - Return to the default environment
 ## Future of BeagleEditor
-1. Support for Markdown
 2. Undo, Redo button (There is undo, redo shortcut with Ctrl-Z, Ctrl-Y or Cmd-Z, Cmd-Y)
 3. Search and Replace

@@ -18,6 +18,6 @@ This is a roadmap for BeagleEditor. Also you can see it from a project in GitHub
 
 - [ ] Regular expression (regex) for search and Replace
 
-- [ ] Support for Markdown
+- [x] Support for Markdown
 
 - [ ] Undo, Redo button (There is undo, redo shortcut with Ctrl-Z, Ctrl-Y or Cmd-Z, Cmd-Y)

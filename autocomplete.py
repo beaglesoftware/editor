@@ -4,7 +4,9 @@ class PythonSuggestions:
         keywords = [
             'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await', 'break', 'class', 'continue',
             'def', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'print',
-            'in', 'is', 'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield'
+            'in', 'is', 'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield',
+            'str', 'int', 'float', 'type', 'len', 'or'
+
         ]
         return [kw for kw in keywords if kw.startswith(word_fragment)]
 
