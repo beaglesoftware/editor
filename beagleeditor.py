@@ -153,7 +153,7 @@ class Ui_MainWindow(object):
         self.plainTextEdit.completer = self.completer
         self.plainTextEdit.textChanged.connect(self.update_completions)
         self.filename = None
-        self.version = "2024.4"
+        self.version = "2024.4.0.1"
         self.current_highlighter = None
         self.is_file_opened = False
         self.is_pyfile_opened = False
@@ -231,7 +231,6 @@ class Ui_MainWindow(object):
         self.update_completions()
         self.apply_highlighter()
         self.add_run_action()
-        del self.mdpreTextEdit
         if self.filename.endswith('.md'):
             self.mdpreTextEdit = QtWidgets.QTextEdit(parent=self.gridLayoutWidget)
             self.mdpreTextEdit.setObjectName("mdpreTextEdit")
