@@ -11,5 +11,6 @@ jobs:
         with:
           identifier: BeagleSoftware.BeagleEditor
           version: ${{ github.event.release.tag_name }}
+          installers-regex: '\.exe$' # Only .exe files
           token: ${{ secrets.WINGET_TOKEN }}
           fork-user: ManiArasteh
