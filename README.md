@@ -1,7 +1,8 @@
+![BeagleEditor Poster](https://github.com/user-attachments/assets/32bb23ee-f5b4-414d-a715-7e140c07b559)
 # BeagleEditor
 A code editor called BeagleEditor
 ## Installation
-### By using Python (good for people who uses Mac or Linux)
+### Using Python (good for people who uses Mac or Linux)
 #### Mac
 Install Python by going to [Python site](https://www.python.org) or Homebrew (I only have Windows. I'm not sure this is the correct command)
 ```
@@ -36,11 +37,11 @@ pkg install python
 ```
 (Install or Update Python depending on your Linux distribution)
 Then, install git depending on your Linux distribution
-Clone repository by using command below
+Clone repository using command below
 ```
 git clone https://github.com/MaArasteh/beagleeditor.git
 ```
-Install PyQt6 by using command below
+Install PyQt6 using command below
 ```
 pip install PyQt6
 ```
@@ -60,11 +61,13 @@ Clone repository
 ```
 git clone https://github.com/MaArasteh/beagleeditor.git
 ```
-Run editor by using command below
+Run editor using command below
 ```
 python main.py <filename>
 ```
-### By using executable file (Only on Windows) (Windows 8, 8.1, 10 and 11)
+### Using 'winget'
+
+### Using executable file (Only on Windows) (Windows 8, 8.1, 10 and 11)
 Download .exe file from [Releases page](https://github.com/MaArasteh/beagleeditor/releases)
 
 Run it by double-clicking on it
