@@ -1,6 +1,6 @@
 ![BeagleEditor Poster](https://github.com/user-attachments/assets/32bb23ee-f5b4-414d-a715-7e140c07b559)
 # BeagleEditor
-A code editor called BeagleEditor
+A code editor powered by beagles.
 ## Installation
 ### Using Python (good for people who uses Mac or Linux)
 #### Mac
@@ -15,23 +15,23 @@ pip install PyQt6
 ```
 Download this repository by going to Code > Download ZIP or use Git to clone
 ```
-git clone github.com/MaArasteh/beagleeditor.git
+git clone https://github.com/beaglesoftware/editor.git
 ```
 Now, run editor by using
 ```
-python3 main.py <filename>
+python3 beagleeditor.py
 ```
-#### Linux
+## Linux
 Install Python3 (No needed, but you can check if Python installed or not)
-##### Debian / Ubuntu
+### Debian / Ubuntu
 ```
-sudo apt install python3
+sudo apt install python3 python3-pip
 ```
-##### Fedora / Red Hat
+### Fedora / Red Hat
 ```
-sudo dnf install python3
+sudo dnf install python3 python3-pip
 ```
-##### FreeBSD (Termux doesn't work anymore because BeagleEditor is now a GUI application)
+### FreeBSD (Termux doesn't work anymore because BeagleEditor is now a GUI application)
 ```
 pkg install python
 ```
@@ -39,36 +39,37 @@ pkg install python
 Then, install git depending on your Linux distribution
 Clone repository using command below
 ```
-git clone https://github.com/MaArasteh/beagleeditor.git
+git clone https://github.com/beaglesoftware/editor.git
 ```
-Install PyQt6 using command below
+Install requirements using command below
 ```
-pip install PyQt6
+pip install -r requirements.txt
 ```
 Run Editor by changing directory to beagleeditor and running main.py by using argument below
 ```
-python main.py <filename>
+python BeagleEditor.py 
 ```
-#### Windows
-Install Python and Git from their website
-[https://python.org/](https://www.python.org)
-[https://git-scm.com/](https://git-scm.com/)
-Then, install PyQt6 by using Pip
-```
-pip install PyQt6
-```
+## Windows
+Install [Python](https://python.org) and [Git](https://git-scm.com/) from their website
 Clone repository
 ```
-git clone https://github.com/MaArasteh/beagleeditor.git
+git clone https://github.com/beaglesoftware/editor.git
+```
+Then install requirements
+```
+pip install -r requirements.txt
 ```
 Run editor using command below
 ```
 python main.py <filename>
 ```
 ### Using 'winget'
-
+Run this command:
+```
+winget install BeagleSoftware.BeagleEditor
+```
 ### Using executable file (Only on Windows) (Windows 8, 8.1, 10 and 11)
-Download .exe file from [Releases page](https://github.com/MaArasteh/beagleeditor/releases)
+Download .exe file from [Releases page](https://github.com/beaglesoftware/editor/releases)
 
 Run it by double-clicking on it
 ## Features
@@ -114,5 +115,6 @@ pyshell - Opens Python shell
 
 exit - Return to the default environment
 ## Future of BeagleEditor
-2. Undo, Redo button (There is undo, redo shortcut with Ctrl-Z, Ctrl-Y or Cmd-Z, Cmd-Y)
-3. Search and Replace
+1. Undo, Redo button (There is undo, redo shortcut with Ctrl-Z, Ctrl-Y or Cmd-Z, Cmd-Y)
+2. Search and Replace
+3. Migrate to TypeScript and Monaco Editor
