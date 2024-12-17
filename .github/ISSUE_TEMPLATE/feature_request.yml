@@ -17,7 +17,7 @@ body:
   - type: input
     attributes:
       label: Write a summary of what you like to be added in the future
-      placeholder: Example: I like to add a new cool feature called AI chat
+      placeholder: for example, I like to add a new cool feature called AI chat
     validation:
       required: true
   - type: textarea
