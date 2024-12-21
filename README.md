@@ -2,76 +2,55 @@
 # BeagleEditor
 A code editor powered by beagles.
 ## Installation
-### Using Python (good for people who uses Mac or Linux)
+### Using Python (good for someone who uses Mac)
 #### Mac
-Install Python by going to [Python site](https://www.python.org) or Homebrew (I only have Windows. I'm not sure this is the correct command)
+Install Python by going to [Python site](https://www.python.org) or Homebrew:
 ```
 brew install python3
-```
-(If it's not correct please Google it)
-then, install PyQt6 using Pip
-```
-pip install PyQt6
 ```
 Download this repository by going to Code > Download ZIP or use Git to clone
 ```
 git clone https://github.com/beaglesoftware/editor.git
 ```
+Now, install requirements:
+```shell
+# If you get an error, try using --break-system-packages switch
+python3 -m pip install -r requirements.txt
+```
 Now, run editor by using
 ```
 python3 beagleeditor.py
 ```
-## Linux
-Install Python3 (No needed, but you can check if Python installed or not)
-### Debian / Ubuntu
-```
-sudo apt install python3 python3-pip
-```
-### Fedora / Red Hat
-```
-sudo dnf install python3 python3-pip
-```
-### FreeBSD (Termux doesn't work anymore because BeagleEditor is now a GUI application)
-```
-pkg install python
-```
-(Install or Update Python depending on your Linux distribution)
-Then, install git depending on your Linux distribution
-Clone repository using command below
+#### Windows
+Install Python by going to [Python site](https://python.org)
+
+Clone repository:
 ```
 git clone https://github.com/beaglesoftware/editor.git
 ```
-Install requirements using command below
+Now install requirements:
+```powershell
+py -m pip install -r requirements.txt
 ```
-pip install -r requirements.txt
+Run editor using
 ```
-Run Editor by changing directory to beagleeditor and running main.py by using argument below
+python3 beagleeditor.py
 ```
-python BeagleEditor.py 
-```
-## Windows
-Install [Python](https://python.org) and [Git](https://git-scm.com/) from their website
-Clone repository
-```
-git clone https://github.com/beaglesoftware/editor.git
-```
-Then install requirements
-```
-pip install -r requirements.txt
-```
-Run editor using command below
-```
-python main.py <filename>
-```
+### Using executable file
+## Windows and Mac
+Download from [Releases](https://github.com/beaglesoftware/editor/releases) page and download `BeagleEditor-{latest version}-Installer.exe` for Windows or `BeagleEditor-{latest version}-Mac.zip` or `BeagleEditor-{latest version}-Mac.dmg` for Mac
+
 ### Using 'winget'
 Run this command:
 ```
 winget install BeagleSoftware.BeagleEditor
 ```
-### Using executable file (Only on Windows) (Windows 8, 8.1, 10 and 11)
-Download .exe file from [Releases page](https://github.com/beaglesoftware/editor/releases)
 
-Run it by double-clicking on it
+### Using Homebrew
+```
+brew install beaglesoftware/tap/beagleeditor
+```
+
 ## Features
 1. Syntax highlighting
 2. Autocomplete
@@ -81,7 +60,7 @@ Run it by double-clicking on it
 6. A terminal for BeagleEditor (It is be avaliable through a plugin)
 6. More features coming soon
 ## What is Plugins
-Read them in [BeagleEditor Plugins wiki](https://github.com/MaArasteh/beagleeditor/wiki/Plugins)
+Read them in [BeagleEditor Plugins wiki](https://github.com/ManiArasteh/editor/wiki/Plugins)
 ## BeagleEditor shell
 A terminal only for BeagleEditor with its specified commands.
 I don't think terminal works on EXE file. I will test and say the result in Releases page (in v3 release)
@@ -91,6 +70,7 @@ help - Shows avaliable commands.
 help {command} - Shows detail of the command you want
 
 gotodir - Same function with CD command in terminals (Don't confuse with a CD/DVD). Changes directory
+
 goto {env} - Go to an environment
 
 exit - Getting out of BeagleEditor shell
