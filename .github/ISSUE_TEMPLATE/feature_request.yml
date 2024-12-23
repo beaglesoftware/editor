@@ -10,10 +10,13 @@ body:
         Please don't ask your questions here. Any questions will be closed.
   - type: checkboxes
     attributes:
-      - label: I have searched for [existing issues](https://github.com/beaglesoftware/editor)
-        required: true
-      - label: I have installed latest version of BeagleEditor (and plugins)
-        required: true
+      label: Please check these checkboxes, if you already did them
+      description: These are required for opening an issue
+      options:
+        - label: I have searched for [existing issues](https://github.com/beaglesoftware/editor)
+          required: true
+        - label: I have installed latest version of BeagleEditor (and plugins)
+          required: true
   - type: input
     attributes:
       label: Write a summary of what you like to be added in the future
@@ -25,10 +28,11 @@ body:
       label: Describe your feature request
       description: A clear and concise description of what does it do and more details. 
     validations:
-    required: false
+      required: false
   - type: checkboxes
-    attributes:
-      label: I have checked that the feature already exists or not
+    options:
+      - label: I have checked that the feature already exists or not
+        required: true
   - type: markdown
     attributes:
       value: |
