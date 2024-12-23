@@ -1,0 +1,67 @@
+name: Bug report
+description: Report a bug in BeagleEditor
+title: "Bug: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **IMPORTANT:** Don't post off-topic comments.
+        Please don't ask your questions here. Any questions will be closed.
+  - type: checkboxes
+    attributes:
+      label: Please check these checkboxes, if you already did them
+      description: These are required for opening an issue
+      options:
+        - label: I have searched for [existing issues](https://github.com/beaglesoftware/editor)
+          required: true
+        - label: I have installed the latest version of BeagleEditor (and plugins)
+          required: true
+  - type: input
+    attributes:
+      label: What's your OS
+      placeholder: Example: macOS Sequoia
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: What's your OS version
+      placeholder: Example: macOS Sequoia 15.2
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: What's your BeagleEditor version?
+      placeholder: Example: BeagleEditor Fixed Bliss 2024.4.0.1
+  - type: input
+    attributes:
+      label: Write a summary of what was the bug
+      placeholder: for example, BeagleEditor crashes when trying to save the settings
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of bug details (such as BeagleEditor turns a file into a binary and more details)
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: What did you expected?
+    validations:
+      required: true
+  - type: checkboxes
+    options:
+      - label: I have checked that the bug exists twice.
+        required: true
+  - type: markdown
+    attributes:
+      value: |
+        Again! **NO OFF-TOPIC COMMENTS. UNLESS YOU WILL BE BLOCKED**
+        We only allow good manners
+        If you have any questions, ask them in [Discussions](https://github.com/beaglesoftware/editor/discussions)
+        
+        We wish you the best,
+        BeagleSoftware
+        
