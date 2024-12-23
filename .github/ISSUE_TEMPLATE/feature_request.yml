@@ -30,9 +30,12 @@ body:
     validations:
       required: false
   - type: checkboxes
-    options:
-      - label: I have checked that the feature already exists or not
-        required: true
+    attributes:
+      label: Confirmation
+      description: Ensure the feature doesn't already exist
+      options:
+        - label: I have checked that the feature already exists or not
+          required: true
   - type: markdown
     attributes:
       value: |
