@@ -20,23 +20,23 @@ body:
   - type: input
     attributes:
       label: What's your OS
-      placeholder: Example: macOS Sequoia
+      placeholder: For example, macOS Sequoia
     validations:
       required: true
   - type: input
     attributes:
       label: What's your OS version
-      placeholder: Example: macOS Sequoia 15.2
+      placeholder: For example, macOS Sequoia 15.2
     validations:
       required: true
   - type: input
     attributes:
       label: What's your BeagleEditor version?
-      placeholder: Example: BeagleEditor Fixed Bliss 2024.4.0.1
+      placeholder: For example BeagleEditor Fixed Bliss 2024.4.0.1
   - type: input
     attributes:
       label: Write a summary of what was the bug
-      placeholder: for example, BeagleEditor crashes when trying to save the settings
+      placeholder: For example, BeagleEditor crashes when trying to save the settings
     validations:
       required: true
   - type: textarea
