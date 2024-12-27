@@ -1,6 +1,7 @@
 ![BeagleEditor Poster](https://github.com/user-attachments/assets/32bb23ee-f5b4-414d-a715-7e140c07b559)
 # BeagleEditor
 A code editor powered by beagles.
+
 ## Installation
 ### Using Python (good for someone who uses Mac)
 #### Mac
@@ -98,3 +99,8 @@ exit - Return to the default environment
 1. Undo, Redo button (There is undo, redo shortcut with Ctrl-Z, Ctrl-Y or Cmd-Z, Cmd-Y)
 2. Search and Replace
 3. Migrate to TypeScript and Monaco Editor
+
+## Screenshot
+<img width="1376" alt="Screenshot 1403-10-07 at 3 30 34 PM" src="https://github.com/user-attachments/assets/d1398c27-9259-4e9b-b6ac-a7be2de7a19f" />
+
+A preview of BeagleEditor
