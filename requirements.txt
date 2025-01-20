@@ -1,0 +1,5 @@
+Python-Markdown
+PyQt6
+bs4
+requests
+html5lib
