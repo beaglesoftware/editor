@@ -60,41 +60,10 @@ brew install beaglesoftware/tap/beagleeditor
 5. Running Python file
 6. A terminal for BeagleEditor (It is be avaliable through a plugin)
 6. More features coming soon
-## What is Plugins
+
+## What are Plugins?
 Read them in [BeagleEditor Plugins wiki](https://github.com/ManiArasteh/editor/wiki/Plugins)
-## BeagleEditor shell
-A terminal only for BeagleEditor with its specified commands.
-I don't think terminal works on EXE file. I will test and say the result in Releases page (in v3 release)
-### Commands
-help - Shows avaliable commands.
 
-help {command} - Shows detail of the command you want
-
-gotodir - Same function with CD command in terminals (Don't confuse with a CD/DVD). Changes directory
-
-goto {env} - Go to an environment
-
-exit - Getting out of BeagleEditor shell
-### Environments
-git - Git environment with Git commands
-
-py or python - Python environment with running Python executable ability and Python shell
-#### Git Commands
-status - Show the git status
-
-checkout {branch} - Checkout a specific branch
-
-commit -m {message} - Commit with a message
-
-push - Push the repository to GitHub
-
-exit - Return to the default environment
-#### Python Commands
-run - Runs Python file
-
-pyshell - Opens Python shell
-
-exit - Return to the default environment
 ## Future of BeagleEditor
 1. Undo, Redo button (There is undo, redo shortcut with Ctrl-Z, Ctrl-Y or Cmd-Z, Cmd-Y)
 2. Search and Replace
