@@ -7,7 +7,7 @@ A code editor powered by beagles.
 #### Mac
 Install Python by going to [Python site](https://www.python.org) or Homebrew:
 ```
-brew install python3
+brew install python
 ```
 Download this repository by going to Code > Download ZIP or use Git to clone
 ```
