@@ -22,6 +22,35 @@ Now, run editor by using
 ```
 python3 beagleeditor.py
 ```
+
+#### Linux
+Install Python by installing it via your package manager:
+##### Debian-based (Ubuntu/Debian/Linux Mint)
+```
+sudo apt install python3
+```
+##### Red Hat-based (Fedora/CentOS/RHEL)
+```
+sudo dnf install python
+```
+##### Arch (btw)-based (Arch/Manjaro/Antergos/Chakra)
+```
+sudo pacman -S python
+```
+Download this repository by going to Code > Download ZIP or use Git to clone
+```
+git clone https://github.com/beaglesoftware/editor.git
+```
+Now, install requirements:
+```shell
+# If you get an error, try using --break-system-packages switch (but be careful)
+python3 -m pip install -r requirements.txt
+```
+Now, run editor by using
+```
+python3 beagleeditor.py
+```
+
 #### Windows
 Install Python by going to [Python site](https://python.org)
 
@@ -35,7 +64,7 @@ py -m pip install -r requirements.txt
 ```
 Run editor using
 ```
-python3 beagleeditor.py
+python beagleeditor.py
 ```
 ### Using executable file
 ## Windows and Mac
@@ -72,4 +101,6 @@ Read them in [BeagleEditor Plugins wiki](https://github.com/ManiArasteh/editor/w
 ## Screenshot
 <img width="1376" alt="Screenshot 1403-10-07 at 3 30 34 PM" src="https://github.com/user-attachments/assets/d1398c27-9259-4e9b-b6ac-a7be2de7a19f" />
 
-A preview of BeagleEditor
+A preview of BeagleEditor on macOS
+
+
